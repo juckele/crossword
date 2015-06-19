@@ -1,5 +1,7 @@
 # crossword
 
+To prepare this as an eclipse project: gradle build eclipse
+
 A program for creating 'American Crosswords' like what you would see in NYTimes.
 
 You supply a word list in JSON which is an array of word objects and word group objects. The wordlist format is demonstrated below. Word objects define a word to place in the crossword and a score to reward the alogirthm for successfully placing the word in the crossword. Word groups contain words, and allow word usage to be further qualified.
