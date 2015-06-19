@@ -21,3 +21,11 @@ jar {
     attributes 'Main-Class': 'com.johnuckele.puzzle.crossword.HelloGradle'
   }
 }
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  testCompile group: 'junit', name: 'junit', version: '4.+'
+}
