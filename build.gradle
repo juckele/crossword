@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ["src"]
+    }
+  }
+}
+
+compileJava {
+  destinationDir = file('bin')
+  options.fork = true
+}
+
+jar {
+  from files('bin')
+
+  manifest {
+    attributes 'Main-Class': 'com.johnuckele.puzzle.crossword.HelloGradle'
+  }
+}
