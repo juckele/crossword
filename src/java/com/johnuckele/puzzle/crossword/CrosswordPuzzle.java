@@ -43,7 +43,9 @@ public class CrosswordPuzzle {
 	}
 	if (verbose) {
 	    sb.append("Total score is ");
-	    sb.append(_horizontalAnswers.getScore() + _verticalAnswers.getScore()).append('\n');
+	    sb.append(
+		    _horizontalAnswers.getScore() + _verticalAnswers.getScore())
+		    .append('\n');
 	    sb.append(this.getSymmetryDescription()).append('\n');
 	}
 	return sb.toString();
