@@ -13,8 +13,10 @@ public class CrosswordSymmetryTest {
 
     @Test
     public void testEmptyPuzzle() {
-	System.out.println("test E");
+	// Setup puzzle
 	CrosswordPuzzle puzzle = new CrosswordPuzzle(15);
+	puzzle.blockOpenSpaces();
+
 	SymmetryDescription sym = puzzle.getSymmetryDescription();
 	for (Symmetry s : Symmetry.values()) {
 	    Assert.assertTrue(sym.is(s));
@@ -23,9 +25,12 @@ public class CrosswordSymmetryTest {
 
     @Test
     public void testUnsymmetricPuzzle() {
-	System.out.println("test U");
-	CrosswordPuzzle puzzle = new CrosswordPuzzle(15);
+	// Setup puzzle
+	CrosswordPuzzle puzzle = new CrosswordPuzzle(9);
 	puzzle.placeWord(new Word("donkey", 5), 2, 3, Direction.VERTICAL);
+	puzzle.blockOpenSpaces();
+
+	// Test Symmetries
 	SymmetryDescription sym = puzzle.getSymmetryDescription();
 	for (Symmetry s : Symmetry.values()) {
 	    Assert.assertFalse(sym.is(s));
@@ -34,11 +39,13 @@ public class CrosswordSymmetryTest {
 
     @Test
     public void testHorizontallySymmetricPuzzle() {
-	System.out.println("test H");
+	// Setup puzzle
 	CrosswordPuzzle puzzle = new CrosswordPuzzle(7);
 	puzzle.placeWord(new Word("donkey", 5), 0, 0, Direction.VERTICAL);
 	puzzle.placeWord(new Word("monkey", 5), 0, 6, Direction.VERTICAL);
-	System.out.println(puzzle);
+	puzzle.blockOpenSpaces();
+
+	// Test Symmetries
 	SymmetryDescription sym = puzzle.getSymmetryDescription();
 	Assert.assertTrue(sym.is(Symmetry.HORIZONTAL));
 	Assert.assertFalse(sym.is(Symmetry.VERTICAL));
@@ -47,11 +54,13 @@ public class CrosswordSymmetryTest {
 
     @Test
     public void testVerticallySymmetricPuzzle() {
-	System.out.println("test V");
+	// Setup puzzle
 	CrosswordPuzzle puzzle = new CrosswordPuzzle(7);
 	puzzle.placeWord(new Word("donkey", 5), 2, 1, Direction.HORIZONTAL);
 	puzzle.placeWord(new Word("monkey", 5), 4, 1, Direction.HORIZONTAL);
-	System.out.println(puzzle);
+	puzzle.blockOpenSpaces();
+
+	// Test Symmetries
 	SymmetryDescription sym = puzzle.getSymmetryDescription();
 	Assert.assertFalse(sym.is(Symmetry.HORIZONTAL));
 	Assert.assertTrue(sym.is(Symmetry.VERTICAL));
@@ -60,11 +69,13 @@ public class CrosswordSymmetryTest {
 
     @Test
     public void testTwoFoldRotionationallySymmetricPuzzle() {
-	System.out.println("test R");
-	CrosswordPuzzle puzzle = new CrosswordPuzzle(15);
-	puzzle.placeWord(new Word("donkey", 5), 1, 3, Direction.VERTICAL);
-	puzzle.placeWord(new Word("monkey", 5), 3, 2, Direction.VERTICAL);
-	System.out.println(puzzle);
+	// Setup puzzle
+	CrosswordPuzzle puzzle = new CrosswordPuzzle(11);
+	puzzle.placeWord(new Word("donkey", 5), 1, 1, Direction.VERTICAL);
+	puzzle.placeWord(new Word("monkey", 5), 4, 9, Direction.VERTICAL);
+	puzzle.blockOpenSpaces();
+
+	// Test Symmetries
 	SymmetryDescription sym = puzzle.getSymmetryDescription();
 	Assert.assertFalse(sym.is(Symmetry.HORIZONTAL));
 	Assert.assertFalse(sym.is(Symmetry.VERTICAL));

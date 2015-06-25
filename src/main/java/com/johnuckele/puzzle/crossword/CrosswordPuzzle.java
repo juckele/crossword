@@ -1,5 +1,7 @@
 package com.johnuckele.puzzle.crossword;
 
+import java.util.HashMap;
+
 public class CrosswordPuzzle {
     public static final char BLOCKED = ' ';
     public static final char CLEAR = 0;
@@ -59,9 +61,36 @@ public class CrosswordPuzzle {
 	}
     }
 
-    public SymmetryDescription getSymmetryDescription() {
-	return new SymmetryDescription(true);
+    public void blockOpenSpaces() {
+	for (int i = 0; i < _size; i++) {
+	    for (int j = 0; j < _size; j++) {
+		if (_letterGrid[i][j] == CLEAR) {
+		    _letterGrid[i][j] = BLOCKED;
+		}
+	    }
+	}
+    }
 
+    public SymmetryDescription getSymmetryDescription() {
+	HashMap<Symmetry, Boolean> symmetries = new HashMap<Symmetry, Boolean>();
+	symmetries.put(Symmetry.HORIZONTAL, isHorizontallySymmetric());
+	// TODO: The below lines are obviously incorrect.
+	symmetries.put(Symmetry.VERTICAL, false);
+	symmetries.put(Symmetry.TWO_FOLD_ROTATIONAL, false);
+	return new SymmetryDescription(symmetries);
+    }
+
+    private boolean isHorizontallySymmetric() {
+	for (int i = 0; i < _size; i++) {
+	    for (int j = 0; j < _size; j++) {
+		char c = _letterGrid[i][j];
+		char mirror = _letterGrid[i][_size - j - 1];
+		if (c == BLOCKED && mirror != BLOCKED) {
+		    return false;
+		}
+	    }
+	}
+	return true;
     }
 
     public String toString() {
@@ -79,12 +108,14 @@ public class CrosswordPuzzle {
 
 	}
 	for (int i = 0; i < _size; i++) {
+	    sb.append('.');
 	    for (int j = 0; j < _size; j++) {
 		if (_letterGrid[i][j] == CLEAR) {
 		    sb.append('-');
 		} else {
 		    sb.append(_letterGrid[i][j]);
 		}
+		sb.append('.');
 	    }
 	    sb.append('\n');
 	}
@@ -104,4 +135,5 @@ public class CrosswordPuzzle {
 	puzzle.placeWord(new Word("monkey", 5), 3, 2, Direction.HORIZONTAL);
 	System.out.println(puzzle.toString(true));
     }
+
 }

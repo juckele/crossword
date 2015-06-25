@@ -4,24 +4,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SymmetryDescription {
-    private Map<Symmetry, Boolean> symmetries;
+    private final Map<Symmetry, Boolean> _symmetries;
 
     /**
-     * generates a new SymmetryDescription with all symmetries initially set to
-     * false
+     * Creates a new SymmetryDescription object corresponding to a HashMap of of
+     * kinds of symmetry to boolean values (true indicating symmetry, false
+     * indicating asymmetry)
+     * 
+     * @param symmetries
+     *            A hash map of Symmetry types to Boolean
      */
-    public SymmetryDescription() {
-	this(false);
-    }
-
-    /**
-     * generates a new SymmetryDescription with all symmetries initially set to
-     * a specified value
-     */
-    public SymmetryDescription(boolean startingValues) {
-	symmetries = new HashMap<Symmetry, Boolean>(Symmetry.values().length);
+    public SymmetryDescription(HashMap<Symmetry, Boolean> symmetries) {
+	_symmetries = new HashMap<Symmetry, Boolean>(Symmetry.values().length);
 	for (Symmetry s : Symmetry.values()) {
-	    symmetries.put(s, startingValues);
+	    if (symmetries.get(s) != null) {
+		_symmetries.put(s, symmetries.get(s));
+	    } else {
+		throw new IllegalStateException(
+			"HashMap objects used to construct SymmetryDescription objects must "
+				+ "contain keys for all Symmetry values");
+	    }
 	}
     }
 
@@ -33,7 +35,7 @@ public class SymmetryDescription {
      * @return boolean
      */
     public boolean is(Symmetry s) {
-	return symmetries.get(s);
+	return _symmetries.get(s);
     }
 
     public String toString() {
@@ -41,17 +43,11 @@ public class SymmetryDescription {
 	sb.append("SymmetryDescription: {");
 	String previous = "";
 	for (Symmetry s : Symmetry.values()) {
-	    sb.append(previous).append(s).append(":").append(symmetries.get(s));
+	    sb.append(previous).append(s).append(":")
+		    .append(_symmetries.get(s));
 	    previous = ", ";
 	}
 	sb.append("}");
 	return sb.toString();
-    }
-
-    /*
-     * Demos the SymmetryDescription toString
-     */
-    public static void main(String[] args) {
-	System.out.println(new SymmetryDescription());
     }
 }
