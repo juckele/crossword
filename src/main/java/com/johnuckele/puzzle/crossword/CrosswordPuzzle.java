@@ -2,8 +2,8 @@ package com.johnuckele.puzzle.crossword;
 
 public class CrosswordPuzzle {
     public static final char BLOCKED = ' ';
-    public static final char CLEAR = ' ';
-    public static final char MUST_USE = ' ';
+    public static final char CLEAR = 0;
+    public static final char MUST_USE = '*';
     private int _size;
     private char[][] _letterGrid;
     private WordList _horizontalAnswers;
@@ -23,13 +23,14 @@ public class CrosswordPuzzle {
 		|| col < 0
 		|| row >= _size
 		|| col >= _size
-		|| (direction == Direction.VERTICAL && row + string.length() >= _size)
-		|| (direction == Direction.HORIZONTAL && col + string.length() >= _size)) {
+		|| (direction == Direction.VERTICAL && row + string.length() > _size)
+		|| (direction == Direction.HORIZONTAL && col + string.length() > _size)) {
 	    return false;
 	}
 	// check for letter conflicts
 	for (int i = 0; i < string.length(); i++) {
-	    if (_letterGrid[row][col] != 0
+	    if (_letterGrid[row][col] != CLEAR
+		    && _letterGrid[row][col] != MUST_USE
 		    && _letterGrid[row][col] != string.charAt(i)) {
 		return false;
 	    }
@@ -60,6 +61,7 @@ public class CrosswordPuzzle {
 
     public SymmetryDescription getSymmetryDescription() {
 	return new SymmetryDescription(true);
+
     }
 
     public String toString() {
@@ -78,8 +80,8 @@ public class CrosswordPuzzle {
 	}
 	for (int i = 0; i < _size; i++) {
 	    for (int j = 0; j < _size; j++) {
-		if (_letterGrid[i][j] == 0) {
-		    sb.append(' ');
+		if (_letterGrid[i][j] == CLEAR) {
+		    sb.append('-');
 		} else {
 		    sb.append(_letterGrid[i][j]);
 		}

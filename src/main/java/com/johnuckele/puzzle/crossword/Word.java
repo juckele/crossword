@@ -10,7 +10,6 @@ public class Word {
     }
 
     public int getScore() {
-	// TODO Yup. This is wrong too. Fix it as well.
 	return _score;
     }
 
