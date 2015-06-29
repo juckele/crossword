@@ -81,7 +81,7 @@ public class CrosswordPuzzle {
 		return new SymmetryDescription(symmetries);
 	}
 
-	private boolean isHorizontallySymmetric() {
+	private boolean isVerticallySymmetric() {
 		for (int i = 0; i < _size; i++) {
 			for (int j = 0; j < _size; j++) {
 				char c = _letterGrid[i][j];
@@ -94,7 +94,7 @@ public class CrosswordPuzzle {
 		return true;
 	}
 
-	private boolean isVerticallySymmetric() {
+	private boolean isHorizontallySymmetric() {
 		for (int i = 0; i < _size; i++) {
 			for (int j = 0; j < _size; j++) {
 				char c = _letterGrid[i][j];
