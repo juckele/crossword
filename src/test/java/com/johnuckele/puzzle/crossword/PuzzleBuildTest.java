@@ -9,6 +9,8 @@ public class PuzzleBuildTest {
 	private static Word DONKEY = new Word("DONKEY", 10);
 	private static Word MONKEY = new Word("MONKEY", 12);
 	private static Word MONKEYS = new Word("MONKEYS", 14);
+	private static Word HE = new Word("HE", 0);
+	private static Word SHE = new Word("SHE", 1);
 
 	@Test
 	public void canAddWords() {
@@ -56,6 +58,22 @@ public class PuzzleBuildTest {
 		} catch (IllegalStateException e) {
 			Assert.assertNotNull("Error expected", e);
 		}
+
+		// Place the first word
+		canPlace = puzzle.canPlaceWord(HE, 5, 1, Direction.VERTICAL);
+		Assert.assertTrue("Placement should be possible", canPlace);
+		puzzle.placeWord(HE, 5, 1, Direction.VERTICAL);
+
+		// Place a second word that overlaps the first
+		canPlace = puzzle.canPlaceWord(SHE, 4, 1, Direction.VERTICAL);
+		Assert.assertFalse("Placement should not be possible", canPlace);
+		try {
+			puzzle.placeWord(SHE, 4, 1, Direction.VERTICAL);
+			Assert.fail("Placing an overlapping word should fail");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull("Error expected", e);
+		}
+
 	}
 
 	@Test
