@@ -1,6 +1,8 @@
 # crossword
 
-To prepare this as an eclipse project: gradle build eclipse
+To prepare this as an eclipse project: gradle build eclipseClasspath
+To update if the Eclipse project is failing to build: gradle cleanEclipseClasspath build eclipseClasspath
+(Do not use eclipseClean, because it will overwrite the formatter preferences).
 
 A program for creating 'American Crosswords' like what you would see in NYTimes.
 
