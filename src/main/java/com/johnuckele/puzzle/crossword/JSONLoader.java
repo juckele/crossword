@@ -28,8 +28,7 @@ public class JSONLoader {
 		try {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setPreferredSize(new Dimension(600, 600));
-			chooser.setFileFilter(new FileNameExtensionFilter("json files",
-					"json"));
+			chooser.setFileFilter(new FileNameExtensionFilter("json files", "json"));
 			int returnVal = chooser.showOpenDialog(chooser);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
@@ -73,19 +72,15 @@ public class JSONLoader {
 
 	public static void main(String[] args) {
 		// new JSONLoader().loadWordListFromFileChooser();
-		WordList words = new JSONLoader()
-				.loadWordListFromFilename("src/resources/simple.json");
-		
-		/* debugging check
-		for (int i = 0; i < words.size(); i++) {
-			Word w = words.get(i);
-			String s = w.toString();
-			int score = w.getScore();
-			System.out.println("Word List loaded: " + s + ", " + score);
-		} */
+		WordList words = new JSONLoader().loadWordListFromFilename("src/resources/simple.json");
 
-		System.out.println("Total value of all words in the wordlist is: "
-				+ words.getTotalScore());
+		/*
+		 * debugging check for (int i = 0; i < words.size(); i++) { Word w =
+		 * words.get(i); String s = w.toString(); int score = w.getScore();
+		 * System.out.println("Word List loaded: " + s + ", " + score); }
+		 */
+
+		System.out.println("Total value of all words in the wordlist is: " + words.getTotalScore());
 
 	}
 }
