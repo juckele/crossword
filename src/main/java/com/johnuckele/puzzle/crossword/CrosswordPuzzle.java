@@ -19,7 +19,7 @@ public class CrosswordPuzzle {
 	}
 
 	public boolean canPlaceWord(Word word, int row, int col, Direction direction) {
-		String string = word.toString();
+		String string = word.getWord();
 		// check bounds
 		if (row < 0 || col < 0 || row >= _size || col >= _size
 				|| (direction == Direction.VERTICAL && row + string.length() > _size)
@@ -46,7 +46,7 @@ public class CrosswordPuzzle {
 		if (!canPlaceWord(word, row, col, direction)) {
 			throw new IllegalStateException("Word cannot be placed");
 		}
-		String string = word.toString();
+		String string = word.getWord();
 		for (int i = 0; i < string.length(); i++) {
 			_letterGrid[row][col] = string.charAt(i);
 			if (direction == Direction.VERTICAL) {
