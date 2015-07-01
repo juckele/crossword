@@ -38,6 +38,7 @@ public class CrosswordPuzzle {
 				col++;
 			}
 		}
+
 		// no conflicts, it fits!
 		return true;
 	}
@@ -53,6 +54,24 @@ public class CrosswordPuzzle {
 				row++;
 			} else {
 				col++;
+			}
+		}
+
+		// block space before and after word
+		int stringlength = string.length();
+		if (direction == Direction.VERTICAL) {
+			if (row - 1 > 0) {
+				_letterGrid[row - 1][col] = BLOCKED;
+			}
+			if (row + 1 + string.length() < _size) {
+				_letterGrid[row + stringlength + 1][col] = BLOCKED;
+			}
+		} else {
+			if (col - 1 > 0) {
+				_letterGrid[row][col - 1] = BLOCKED;
+			}
+			if (col + 1 + string.length() < _size) {
+				_letterGrid[row][col + string.length()] = BLOCKED;
 			}
 		}
 	}
