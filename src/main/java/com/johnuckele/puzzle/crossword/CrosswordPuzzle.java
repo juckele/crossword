@@ -8,14 +8,12 @@ public class CrosswordPuzzle {
 	public static final char MUST_USE = '*';
 	private int _size;
 	private char[][] _letterGrid;
-	private WordList _horizontalAnswers;
-	private WordList _verticalAnswers;
+	private WordList _answers;
 
 	public CrosswordPuzzle(int size) {
 		_size = size;
 		_letterGrid = new char[_size][_size];
-		_horizontalAnswers = new WordList();
-		_verticalAnswers = new WordList();
+		_answers = new WordList();
 	}
 
 	public boolean canPlaceWord(Word word, int row, int col, Direction direction) {
@@ -43,8 +41,7 @@ public class CrosswordPuzzle {
 			}
 		}
 
-		// check to see if we will be able to block before and after
-
+		// check to abutment conflicts
 		if (direction == Direction.VERTICAL) {
 			if (row > 0) {
 				if (_letterGrid[row - 1][col] != BLOCKED && _letterGrid[row - 1][col] != CLEAR) {
@@ -108,6 +105,9 @@ public class CrosswordPuzzle {
 				_letterGrid[row][col + colOffset] = BLOCKED;
 			}
 		}
+
+		// Add this to our list of answers
+		_answers.add(new PlacedWord(word, row, col, direction));
 	}
 
 	public void blockOpenSpaces() {
@@ -175,9 +175,9 @@ public class CrosswordPuzzle {
 		StringBuilder sb = new StringBuilder();
 		if (verbose) {
 			sb.append("CrosswordPuzzle: ");
-			sb.append(_horizontalAnswers.size() + _verticalAnswers.size()).append(" words (");
-			sb.append(_horizontalAnswers.size()).append(" horizontal & ");
-			sb.append(_verticalAnswers.size()).append(" vertical)");
+			sb.append(_answers.size()).append(" words");
+			// TODO: Readd the capacity to list counts of vertical and
+			// horizontal answers
 			sb.append('\n');
 		}
 		for (int i = 0; i < _size; i++) {
@@ -194,7 +194,7 @@ public class CrosswordPuzzle {
 		}
 		if (verbose) {
 			sb.append("Total score is ");
-			sb.append(_horizontalAnswers.getTotalScore() + _verticalAnswers.getTotalScore()).append('\n');
+			sb.append(_answers.getTotalScore()).append('\n');
 			sb.append(this.getSymmetryDescription()).append('\n');
 		}
 		return sb.toString();
