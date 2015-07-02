@@ -27,25 +27,10 @@ public class CrosswordPuzzle {
 			return false;
 		}
 
-		// check if blocked spaces can be placed before and after word
-		/*
-		 * if (direction == Direction.VERTICAL && _letterGrid[row - 1][col] >= 0
-		 * && _letterGrid[row + string.length()][col] <= _size) { if
-		 * (_letterGrid[row - 1][col] != CLEAR && _letterGrid[row +
-		 * string.length()][col] != CLEAR) { return false; } } else if
-		 * (direction == Direction.HORIZONTAL && _letterGrid[row][col - 1] >= 0
-		 * && _letterGrid[row][col + string.length()] <= _size) { if
-		 * (_letterGrid[row][col - 1] != CLEAR && _letterGrid[row][col +
-		 * string.length()] != CLEAR) { return false; } }
-		 */
-
 		// check for letter conflicts
 		for (int i = 0; i < string.length(); i++) {
 			if (_letterGrid[row][col] != CLEAR && _letterGrid[row][col] != MUST_USE
 					&& _letterGrid[row][col] != string.charAt(i)) {
-				return false;
-			}
-			if (_letterGrid[row][col] == BLOCKED) {
 				return false;
 			}
 
@@ -66,32 +51,34 @@ public class CrosswordPuzzle {
 		}
 
 		String string = word.getWord();
+		int rowOffset = 0;
+		int colOffset = 0;
 
+		// write the word into the grid
 		for (int i = 0; i < string.length(); i++) {
-			_letterGrid[row][col] = string.charAt(i);
+			_letterGrid[row + rowOffset][col + colOffset] = string.charAt(i);
 			if (direction == Direction.VERTICAL) {
-				row++;
+				rowOffset++;
 			} else {
-				col++;
+				colOffset++;
 			}
 		}
 
 		// block space before and after word
-
 		if (direction == Direction.VERTICAL) {
 
-			if (row - string.length() - 1 >= 0) {
-				_letterGrid[row - string.length() - 1][col] = BLOCKED;
+			if (row > 0) {
+				_letterGrid[row - 1][col] = BLOCKED;
 			}
-			if (row < _size) {
-				_letterGrid[row][col] = BLOCKED;
+			if (row + rowOffset < _size) {
+				_letterGrid[row + rowOffset][col] = BLOCKED;
 			}
 		} else {
-			if (col - string.length() - 1 >= 0) {
-				_letterGrid[row][col - string.length() - 1] = BLOCKED;
+			if (col > 0) {
+				_letterGrid[row][col - 1] = BLOCKED;
 			}
-			if (col < _size) {
-				_letterGrid[row][col] = BLOCKED;
+			if (col + colOffset < _size) {
+				_letterGrid[row][col + colOffset] = BLOCKED;
 			}
 		}
 	}
@@ -109,7 +96,6 @@ public class CrosswordPuzzle {
 	public SymmetryDescription getSymmetryDescription() {
 		HashMap<Symmetry, Boolean> symmetries = new HashMap<Symmetry, Boolean>();
 		symmetries.put(Symmetry.HORIZONTAL, isHorizontallySymmetric());
-		// TODO: The below lines are obviously incorrect.
 		symmetries.put(Symmetry.VERTICAL, isVerticallySymmetric());
 		symmetries.put(Symmetry.TWO_FOLD_ROTATIONAL, isTwoFoldRotationallySymmetric());
 		return new SymmetryDescription(symmetries);
@@ -165,7 +151,7 @@ public class CrosswordPuzzle {
 			sb.append(_horizontalAnswers.size() + _verticalAnswers.size()).append(" words (");
 			sb.append(_horizontalAnswers.size()).append(" horizontal & ");
 			sb.append(_verticalAnswers.size()).append(" vertical)");
-
+			sb.append('\n');
 		}
 		for (int i = 0; i < _size; i++) {
 			sb.append('.');
