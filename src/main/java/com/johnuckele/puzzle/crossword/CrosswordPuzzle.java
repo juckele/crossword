@@ -26,12 +26,29 @@ public class CrosswordPuzzle {
 				|| (direction == Direction.HORIZONTAL && col + string.length() > _size)) {
 			return false;
 		}
+
+		// check if blocked spaces can be placed before and after word
+		/*
+		 * if (direction == Direction.VERTICAL && _letterGrid[row - 1][col] >= 0
+		 * && _letterGrid[row + string.length()][col] <= _size) { if
+		 * (_letterGrid[row - 1][col] != CLEAR && _letterGrid[row +
+		 * string.length()][col] != CLEAR) { return false; } } else if
+		 * (direction == Direction.HORIZONTAL && _letterGrid[row][col - 1] >= 0
+		 * && _letterGrid[row][col + string.length()] <= _size) { if
+		 * (_letterGrid[row][col - 1] != CLEAR && _letterGrid[row][col +
+		 * string.length()] != CLEAR) { return false; } }
+		 */
+
 		// check for letter conflicts
 		for (int i = 0; i < string.length(); i++) {
 			if (_letterGrid[row][col] != CLEAR && _letterGrid[row][col] != MUST_USE
 					&& _letterGrid[row][col] != string.charAt(i)) {
 				return false;
 			}
+			if (_letterGrid[row][col] == BLOCKED) {
+				return false;
+			}
+
 			if (direction == Direction.VERTICAL) {
 				row++;
 			} else {
@@ -47,7 +64,9 @@ public class CrosswordPuzzle {
 		if (!canPlaceWord(word, row, col, direction)) {
 			throw new IllegalStateException("Word cannot be placed");
 		}
+
 		String string = word.getWord();
+
 		for (int i = 0; i < string.length(); i++) {
 			_letterGrid[row][col] = string.charAt(i);
 			if (direction == Direction.VERTICAL) {
@@ -58,20 +77,21 @@ public class CrosswordPuzzle {
 		}
 
 		// block space before and after word
-		int stringlength = string.length();
+
 		if (direction == Direction.VERTICAL) {
-			if (row - 1 > 0) {
-				_letterGrid[row - 1][col] = BLOCKED;
+
+			if (row - string.length() - 1 >= 0) {
+				_letterGrid[row - string.length() - 1][col] = BLOCKED;
 			}
-			if (row + 1 + string.length() < _size) {
-				_letterGrid[row + stringlength + 1][col] = BLOCKED;
+			if (row < _size) {
+				_letterGrid[row][col] = BLOCKED;
 			}
 		} else {
-			if (col - 1 > 0) {
-				_letterGrid[row][col - 1] = BLOCKED;
+			if (col - string.length() - 1 >= 0) {
+				_letterGrid[row][col - string.length() - 1] = BLOCKED;
 			}
-			if (col + 1 + string.length() < _size) {
-				_letterGrid[row][col + string.length()] = BLOCKED;
+			if (col < _size) {
+				_letterGrid[row][col] = BLOCKED;
 			}
 		}
 	}
