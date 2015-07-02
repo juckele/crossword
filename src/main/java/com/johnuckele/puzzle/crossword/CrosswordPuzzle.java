@@ -20,6 +20,9 @@ public class CrosswordPuzzle {
 
 	public boolean canPlaceWord(Word word, int row, int col, Direction direction) {
 		String string = word.getWord();
+		int rowOffset = 0;
+		int colOffset = 0;
+
 		// check bounds
 		if (row < 0 || col < 0 || row >= _size || col >= _size
 				|| (direction == Direction.VERTICAL && row + string.length() > _size)
@@ -29,15 +32,40 @@ public class CrosswordPuzzle {
 
 		// check for letter conflicts
 		for (int i = 0; i < string.length(); i++) {
-			if (_letterGrid[row][col] != CLEAR && _letterGrid[row][col] != MUST_USE
-					&& _letterGrid[row][col] != string.charAt(i)) {
+			char currentLetter = _letterGrid[row + rowOffset][col + colOffset];
+			if (currentLetter != CLEAR && currentLetter != MUST_USE && currentLetter != string.charAt(i)) {
 				return false;
 			}
-
 			if (direction == Direction.VERTICAL) {
-				row++;
+				rowOffset++;
 			} else {
-				col++;
+				colOffset++;
+			}
+		}
+
+		// check to see if we will be able to block before and after
+
+		if (direction == Direction.VERTICAL) {
+			if (row > 0) {
+				if (_letterGrid[row - 1][col] != BLOCKED && _letterGrid[row - 1][col] != CLEAR) {
+					return false;
+				}
+			}
+			if (row + rowOffset < _size) {
+				if (_letterGrid[row + rowOffset][col] != BLOCKED && _letterGrid[row + rowOffset][col] != CLEAR) {
+					return false;
+				}
+			}
+		} else {
+			if (col > 0) {
+				if (_letterGrid[row][col - 1] != BLOCKED && _letterGrid[row][col - 1] != CLEAR) {
+					return false;
+				}
+			}
+			if (col + colOffset < _size) {
+				if (_letterGrid[row][col + colOffset] != BLOCKED && _letterGrid[row][col + colOffset] != CLEAR) {
+					return false;
+				}
 			}
 		}
 
@@ -66,7 +94,6 @@ public class CrosswordPuzzle {
 
 		// block space before and after word
 		if (direction == Direction.VERTICAL) {
-
 			if (row > 0) {
 				_letterGrid[row - 1][col] = BLOCKED;
 			}

@@ -73,7 +73,27 @@ public class PuzzleBuildTest {
 		} catch (IllegalStateException e) {
 			Assert.assertNotNull("Error expected", e);
 		}
+	}
 
+	@Test
+	public void cannotAbutWords() {
+		boolean canPlace;
+		CrosswordPuzzle puzzle = new CrosswordPuzzle(15);
+
+		// Place the first word
+		canPlace = puzzle.canPlaceWord(MONKEY, 3, 3, Direction.HORIZONTAL);
+		Assert.assertTrue("Placement should be possible", canPlace);
+		puzzle.placeWord(MONKEY, 3, 3, Direction.HORIZONTAL);
+
+		// Place a second word that abuts the first
+		canPlace = puzzle.canPlaceWord(MONKEYS, 4, 4, Direction.VERTICAL);
+		Assert.assertFalse("Placement should not be possible", canPlace);
+		try {
+			puzzle.placeWord(MONKEYS, 4, 4, Direction.VERTICAL);
+			Assert.fail("Placing an overlapping word should fail");
+		} catch (IllegalStateException e) {
+			Assert.assertNotNull("Error expected", e);
+		}
 	}
 
 	@Test
