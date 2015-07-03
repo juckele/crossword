@@ -20,4 +20,8 @@ public class Word {
 	public String toString() {
 		return _word + ":" + _score;
 	}
+
+	public int getLength() {
+		return _word.length();
+	}
 }
