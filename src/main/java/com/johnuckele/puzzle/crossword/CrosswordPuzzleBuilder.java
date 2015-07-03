@@ -50,13 +50,22 @@ public class CrosswordPuzzleBuilder {
 	}
 
 	public static void main(String[] args) {
-		WordList words = new JSONLoader().loadWordListFromFilename("src/main/resources/simple.json");
-		Word w = getRandomWord(words);
+		// WordList words = new
+		// JSONLoader().loadWordListFromFilename("src/main/resources/simple.json");
+		// CrosswordPuzzleBuilder builder = new CrosswordPuzzleBuilder();
 
-		CrosswordPuzzleBuilder build = new CrosswordPuzzleBuilder(15);
-		CrosswordPuzzle testPuzzle = build(build, w);
-		System.out.println(testPuzzle.toString(true));
+		// builder.setSize(15);
+		// builder.addWordList(words);
 
+		// CrosswordPuzzle testPuzzle1 = builder.build();
+		// System.out.println(testPuzzle1.toString(true));
+
+		// CrosswordPuzzle testPuzzle2 = builder.build();
+		// System.out.println(testPuzzle2.toString(true));
+
+		// builder.setSize(11);
+		// CrosswordPuzzle testPuzzle3 = builder.build();
+		// System.out.println(testPuzzle3.toString(true));
 	}
 
 }
