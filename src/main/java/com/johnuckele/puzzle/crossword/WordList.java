@@ -33,4 +33,12 @@ public class WordList {
 
 		return score;
 	}
+
+	public int indexOf(Word e) {
+		return _words.indexOf(e);
+	}
+
+	public void set(int index, Word e) {
+		_words.set(index, e);
+	}
 }

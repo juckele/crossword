@@ -16,13 +16,20 @@ public class CrosswordPuzzle {
 		_answers = new WordList();
 	}
 
+	public int getSize() {
+		return _size;
+	}
+
 	public boolean canPlaceWord(Word word, int row, int col, Direction direction) {
 		String string = word.getWord();
 		int rowOffset = 0;
 		int colOffset = 0;
 
 		// check bounds
-		if (row < 0 || col < 0 || row >= _size || col >= _size
+		if (row < 0
+				|| col < 0
+				|| row >= _size
+				|| col >= _size
 				|| (direction == Direction.VERTICAL && row + string.length() > _size)
 				|| (direction == Direction.HORIZONTAL && col + string.length() > _size)) {
 			return false;
@@ -31,7 +38,8 @@ public class CrosswordPuzzle {
 		// check for letter conflicts
 		for (int i = 0; i < string.length(); i++) {
 			char currentLetter = _letterGrid[row + rowOffset][col + colOffset];
-			if (currentLetter != CLEAR && currentLetter != MUST_USE && currentLetter != string.charAt(i)) {
+			if (currentLetter != CLEAR && currentLetter != MUST_USE
+					&& currentLetter != string.charAt(i)) {
 				return false;
 			}
 			if (direction == Direction.VERTICAL) {
@@ -44,23 +52,27 @@ public class CrosswordPuzzle {
 		// check to abutment conflicts
 		if (direction == Direction.VERTICAL) {
 			if (row > 0) {
-				if (_letterGrid[row - 1][col] != BLOCKED && _letterGrid[row - 1][col] != CLEAR) {
+				if (_letterGrid[row - 1][col] != BLOCKED
+						&& _letterGrid[row - 1][col] != CLEAR) {
 					return false;
 				}
 			}
 			if (row + rowOffset < _size) {
-				if (_letterGrid[row + rowOffset][col] != BLOCKED && _letterGrid[row + rowOffset][col] != CLEAR) {
+				if (_letterGrid[row + rowOffset][col] != BLOCKED
+						&& _letterGrid[row + rowOffset][col] != CLEAR) {
 					return false;
 				}
 			}
 		} else {
 			if (col > 0) {
-				if (_letterGrid[row][col - 1] != BLOCKED && _letterGrid[row][col - 1] != CLEAR) {
+				if (_letterGrid[row][col - 1] != BLOCKED
+						&& _letterGrid[row][col - 1] != CLEAR) {
 					return false;
 				}
 			}
 			if (col + colOffset < _size) {
-				if (_letterGrid[row][col + colOffset] != BLOCKED && _letterGrid[row][col + colOffset] != CLEAR) {
+				if (_letterGrid[row][col + colOffset] != BLOCKED
+						&& _letterGrid[row][col + colOffset] != CLEAR) {
 					return false;
 				}
 			}
@@ -124,7 +136,8 @@ public class CrosswordPuzzle {
 		HashMap<Symmetry, Boolean> symmetries = new HashMap<Symmetry, Boolean>();
 		symmetries.put(Symmetry.HORIZONTAL, isHorizontallySymmetric());
 		symmetries.put(Symmetry.VERTICAL, isVerticallySymmetric());
-		symmetries.put(Symmetry.TWO_FOLD_ROTATIONAL, isTwoFoldRotationallySymmetric());
+		symmetries.put(Symmetry.TWO_FOLD_ROTATIONAL,
+				isTwoFoldRotationallySymmetric());
 		return new SymmetryDescription(symmetries);
 	}
 
