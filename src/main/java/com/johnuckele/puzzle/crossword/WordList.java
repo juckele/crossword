@@ -1,17 +1,29 @@
 package com.johnuckele.puzzle.crossword;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WordList {
-	private List<Word> _words;
+	private ArrayList<Word> _words;
 
 	public WordList() {
 		_words = new ArrayList<Word>();
 	}
 
+	@SuppressWarnings("unchecked")
+	public WordList(WordList wordList) {
+		this._words = (ArrayList<Word>) wordList._words.clone();
+	}
+
 	public void add(Word e) {
 		_words.add(e);
+	}
+
+	public void remove(Word e) {
+		_words.remove(e);
+	}
+
+	public void add(WordList c) {
+		_words.addAll(c._words);
 	}
 
 	public Word get(int i) {

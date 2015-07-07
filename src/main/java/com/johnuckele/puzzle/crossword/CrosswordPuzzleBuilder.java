@@ -2,8 +2,8 @@ package com.johnuckele.puzzle.crossword;
 
 public class CrosswordPuzzleBuilder {
 	private static int _size;
-	private WordList _words;
-	private int _subList;
+	private WordList _allWords;
+	private WordList _unusedWords;
 
 	public CrosswordPuzzleBuilder() {
 
@@ -14,76 +14,78 @@ public class CrosswordPuzzleBuilder {
 	}
 
 	public void addWordList(WordList words) {
-		_words = words;
-		_subList = _words.size();
+		if (_allWords == null) {
+			_allWords = words;
+		} else {
+			_allWords.add(words);
+		}
 	}
 
 	public Word getRandomWord() {
-
-		int randomFactor = (int) (Math.random() * _subList);
-		Word randomWord = _words.get(randomFactor);
-		swapRandomWordLastWord(randomFactor);
-		_subList--;
+		int randomIndex = (int) (Math.random() * _unusedWords.size());
+		Word randomWord = _unusedWords.get(randomIndex);
 		return randomWord;
 	}
 
-	public void swapRandomWordLastWord(int index) {
-		Word storeWord = _words.get(index);
-
-		int indexLastElement = _words.size() - 1;
-		Word lastWord = _words.get(indexLastElement);
-		_words.set(index, lastWord);
-		_words.set(indexLastElement, storeWord);
-	}
-
 	public Direction getRandomDirection() {
-		Direction direction;
-		int directionFactor = (int) (Math.random() * 2);
-
-		if (directionFactor == 0) {
-			direction = Direction.VERTICAL;
+		if (Math.random() < 0.5) {
+			return Direction.VERTICAL;
 		} else {
-			direction = Direction.HORIZONTAL;
-		}
-		return direction;
-
-	}
-
-	public void placeRandom(CrosswordPuzzle puzzle, Word word,
-			Direction direction) {
-		// pick random spot
-		int randomFactor = _size - word.getLength();
-
-		if (direction == Direction.HORIZONTAL) {
-			int row = (int) (Math.random() * _size);
-			int col = (int) (Math.random() * randomFactor);
-
-			puzzle.placeWord(word, row, col, direction);
-		} else {
-			int row = (int) (Math.random() * randomFactor);
-			int col = (int) (Math.random() * _size);
-
-			puzzle.placeWord(word, row, col, direction);
+			return Direction.HORIZONTAL;
 		}
 	}
 
-	public void addWord(CrosswordPuzzle puzzle) {
-		Word word = getRandomWord();
+	public boolean randomlyPlaceWord(CrosswordPuzzle puzzle, Word word) {
+		// Find the wiggle magnitude based on word length and puzzle size to
+		// determine theoretically valid positions for a word
+		int wiggle = _size - word.getLength();
+		int row, col;
 		Direction direction = getRandomDirection();
-		placeRandom(puzzle, word, direction);
+
+		// Generate the position
+		if (direction == Direction.HORIZONTAL) {
+			row = (int) (Math.random() * _size);
+			col = (int) (Math.random() * wiggle);
+		} else {
+			row = (int) (Math.random() * wiggle);
+			col = (int) (Math.random() * _size);
+		}
+
+		// Place the word if possible
+		if (puzzle.canPlaceWord(word, row, col, direction)) {
+			puzzle.placeWord(word, row, col, direction);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean addWord(CrosswordPuzzle puzzle) {
+		Word word = getRandomWord();
+		boolean sucess = randomlyPlaceWord(puzzle, word);
+		if (sucess) {
+			_unusedWords.remove(word);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public CrosswordPuzzle build() {
 		CrosswordPuzzle p = new CrosswordPuzzle(_size);
-		addWord(p);
-		addWord(p);
+		_unusedWords = new WordList(_allWords);
+		int wordsAdded = 0;
+		while (wordsAdded < 7) {
+			if (addWord(p)) {
+				wordsAdded++;
+			}
+		}
 
 		return p;
 	}
 
 	public static void main(String[] args) {
-		WordList words = new JSONLoader()
-				.loadWordListFromFilename("src/main/resources/simple.json");
+		WordList words = new JSONLoader().loadWordListFromFilename("src/main/resources/simple.json");
 		CrosswordPuzzleBuilder builder = new CrosswordPuzzleBuilder();
 
 		builder.setSize(15);
