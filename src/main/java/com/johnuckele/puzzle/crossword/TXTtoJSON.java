@@ -5,6 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,23 +31,41 @@ public class TXTtoJSON {
 
 		File file = new File(inputFileName);
 		BufferedReader reader = new BufferedReader(new FileReader(file));
-		JSONArray jsonArray = new JSONArray();
+		Set<String> inputWordSet = new HashSet<String>();
 
+		// Load and simplify all words
 		try {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				JSONObject word = makeJSONWordObj(line);
-				jsonArray.put(word);
+				line = stripDiacriticsAndNonLetters(line);
+				inputWordSet.add(line);
 			}
-			return jsonArray;
 		} finally {
 			reader.close();
 		}
+
+		// Generate a sorted list
+		ArrayList<String> inputWordList = new ArrayList<String>(inputWordSet);
+		Collections.sort(inputWordList);
+
+		// Build and return the JSONArray
+		JSONArray jsonArray = new JSONArray();
+		for (String inputWord : inputWordList) {
+			JSONObject word = makeJSONWordObj(inputWord);
+			jsonArray.put(word);
+		}
+		return jsonArray;
+	}
+
+	private String stripDiacriticsAndNonLetters(String input) {
+		String decomposedInput = Normalizer.normalize(input, Form.NFD);
+		String filteredOuput = decomposedInput.toLowerCase().replaceAll("[^a-z]", "");
+		return filteredOuput;
 	}
 
 	private void saveJSONtoFile(JSONArray jsonArray, String outputFileName) throws IOException {
 		FileWriter file = new FileWriter(outputFileName);
-		file.write(jsonArray.toString());
+		file.write(jsonArray.toString(2));
 		file.flush();
 		file.close();
 	}
