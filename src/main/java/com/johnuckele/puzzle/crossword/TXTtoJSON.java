@@ -38,7 +38,9 @@ public class TXTtoJSON {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = stripDiacriticsAndNonLetters(line);
-				inputWordSet.add(line);
+				if (line.length() > 2) {
+					inputWordSet.add(line);
+				}
 			}
 		} finally {
 			reader.close();
