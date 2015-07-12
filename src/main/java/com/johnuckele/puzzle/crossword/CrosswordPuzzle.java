@@ -9,6 +9,8 @@ public class CrosswordPuzzle {
 	private int _size;
 	private char[][] _letterGrid;
 	private WordList _answers;
+	private int _verticalWords;
+	private int _horizontalWords;
 
 	public CrosswordPuzzle(int size) {
 		_size = size;
@@ -108,6 +110,11 @@ public class CrosswordPuzzle {
 
 		// Add this to our list of answers
 		_answers.add(new PlacedWord(word, row, col, direction));
+		if (direction == Direction.VERTICAL) {
+			_verticalWords++;
+		} else {
+			_horizontalWords++;
+		}
 	}
 
 	public void blockOpenSpaces() {
@@ -205,6 +212,14 @@ public class CrosswordPuzzle {
 		puzzle.placeWord(new Word("donkey", 5), 2, 3, Direction.VERTICAL);
 		puzzle.placeWord(new Word("monkey", 5), 3, 2, Direction.HORIZONTAL);
 		System.out.println(puzzle.toString(true));
+	}
+
+	public int getVerticalWords() {
+		return _verticalWords;
+	}
+
+	public int getHorizontalWords() {
+		return _horizontalWords;
 	}
 
 }

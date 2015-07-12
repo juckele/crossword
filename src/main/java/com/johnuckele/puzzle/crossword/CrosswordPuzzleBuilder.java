@@ -27,8 +27,10 @@ public class CrosswordPuzzleBuilder {
 		return randomWord;
 	}
 
-	public Direction getRandomDirection() {
-		if (Math.random() < 0.5) {
+	private Direction getRandomDirection(int existingVertical, int existingHorizontal) {
+		double bias = Math.pow(2, -Math.abs(existingVertical - existingHorizontal) - 1);
+		double verticalChance = existingVertical >= existingHorizontal ? bias : bias + 0.5;
+		if (Math.random() < verticalChance) {
 			return Direction.VERTICAL;
 		} else {
 			return Direction.HORIZONTAL;
@@ -40,7 +42,7 @@ public class CrosswordPuzzleBuilder {
 		// determine theoretically valid positions for a word
 		int wiggle = _size - word.getLength();
 		int row, col;
-		Direction direction = getRandomDirection();
+		Direction direction = getRandomDirection(puzzle.getVerticalWords(), puzzle.getHorizontalWords());
 
 		// Generate the position
 		if (direction == Direction.HORIZONTAL) {
@@ -75,7 +77,8 @@ public class CrosswordPuzzleBuilder {
 		CrosswordPuzzle p = new CrosswordPuzzle(_size);
 		_unusedWords = new WordList(_allWords);
 		int wordsAdded = 0;
-		while (wordsAdded < 7) {
+		long startTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() - startTime < 10000 && wordsAdded < 9) {
 			if (addWord(p)) {
 				wordsAdded++;
 			}
@@ -86,6 +89,8 @@ public class CrosswordPuzzleBuilder {
 
 	public static void main(String[] args) {
 		WordList words = new JSONLoader().loadWordListFromFilename("src/main/resources/simple.json");
+
+		// "src/main/resources/filler.json");
 		CrosswordPuzzleBuilder builder = new CrosswordPuzzleBuilder();
 
 		builder.setSize(15);

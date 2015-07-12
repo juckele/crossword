@@ -20,7 +20,7 @@ public class JSONLoader {
 
 	public WordList loadWordListFromFilename(String filename) {
 		String json = _loadJSONFromFilename(filename);
-		System.out.println("text: " + json);
+		// System.out.println("text: " + json);
 		return _parseWorldlist(json);
 	}
 
