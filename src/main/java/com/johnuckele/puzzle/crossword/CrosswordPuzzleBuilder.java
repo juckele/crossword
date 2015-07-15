@@ -2,8 +2,10 @@ package com.johnuckele.puzzle.crossword;
 
 public class CrosswordPuzzleBuilder {
 	private static int _size;
-	private WordList _allWords;
-	private WordList _unusedWords;
+	private WordList _allPrimaryWords;
+	private WordList _unusedPrimaryWords;
+	private WordList _allFillerWords;
+	private WordList _unusedFillerWords;
 
 	public CrosswordPuzzleBuilder() {
 
@@ -13,17 +15,29 @@ public class CrosswordPuzzleBuilder {
 		_size = size;
 	}
 
-	public void addWordList(WordList words) {
-		if (_allWords == null) {
-			_allWords = words;
-		} else {
-			_allWords.add(words);
+	private void addFillerWordList(WordList words) {
+		if (_allFillerWords == null) {
+			_allFillerWords = new WordList();
 		}
+		_allFillerWords.add(words);
 	}
 
-	public Word getRandomWord() {
-		int randomIndex = (int) (Math.random() * _unusedWords.size());
-		Word randomWord = _unusedWords.get(randomIndex);
+	private void addPrimaryWordList(WordList words) {
+		if (_allPrimaryWords == null) {
+			_allPrimaryWords = new WordList();
+		}
+		_allPrimaryWords.add(words);
+	}
+
+	public Word getRandomWord(boolean primary) {
+		Word randomWord;
+		if (primary) {
+			int randomIndex = (int) (Math.random() * _unusedPrimaryWords.size());
+			randomWord = _unusedPrimaryWords.get(randomIndex);
+		} else {
+			int randomIndex = (int) (Math.random() * _unusedFillerWords.size());
+			randomWord = _unusedFillerWords.get(randomIndex);
+		}
 		return randomWord;
 	}
 
@@ -62,11 +76,14 @@ public class CrosswordPuzzleBuilder {
 		}
 	}
 
-	public boolean addWord(CrosswordPuzzle puzzle) {
-		Word word = getRandomWord();
+	public boolean addWord(CrosswordPuzzle puzzle, boolean primary) {
+		Word word = getRandomWord(primary);
 		boolean sucess = randomlyPlaceWord(puzzle, word);
 		if (sucess) {
-			_unusedWords.remove(word);
+			if (primary) {
+				_unusedPrimaryWords.remove(word);
+			}
+			_unusedFillerWords.remove(word);
 			return true;
 		} else {
 			return false;
@@ -75,11 +92,19 @@ public class CrosswordPuzzleBuilder {
 
 	public CrosswordPuzzle build() {
 		CrosswordPuzzle p = new CrosswordPuzzle(_size);
-		_unusedWords = new WordList(_allWords);
+		_unusedPrimaryWords = new WordList(_allPrimaryWords);
+		_unusedFillerWords = new WordList(_allFillerWords);
 		int wordsAdded = 0;
 		long startTime = System.currentTimeMillis();
 		while (System.currentTimeMillis() - startTime < 10000 && wordsAdded < 9) {
-			if (addWord(p)) {
+			if (addWord(p, true)) {
+				wordsAdded++;
+			}
+		}
+		wordsAdded = 0;
+		startTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() - startTime < 10000 && wordsAdded < 30) {
+			if (addWord(p, false)) {
 				wordsAdded++;
 			}
 		}
@@ -88,13 +113,14 @@ public class CrosswordPuzzleBuilder {
 	}
 
 	public static void main(String[] args) {
-		WordList words = new JSONLoader().loadWordListFromFilename("src/main/resources/simple.json");
+		WordList primaryWords = new JSONLoader().loadWordListFromFilename("src/main/resources/simple.json");
+		WordList fillerWords = new JSONLoader().loadWordListFromFilename("src/main/resources/filler.json");
 
-		// "src/main/resources/filler.json");
 		CrosswordPuzzleBuilder builder = new CrosswordPuzzleBuilder();
 
 		builder.setSize(15);
-		builder.addWordList(words);
+		builder.addPrimaryWordList(primaryWords);
+		builder.addFillerWordList(fillerWords);
 
 		CrosswordPuzzle testPuzzle1 = builder.build();
 		System.out.println(testPuzzle1.toString(true));
