@@ -100,6 +100,7 @@ public class CrosswordPuzzleBuilder {
 		System.out.println(testPuzzle1.toString(true));
 
 		CrosswordPuzzle testPuzzle2 = builder.build();
+		testPuzzle2.blockOpenSpaces();
 		System.out.println(testPuzzle2.toString(true));
 
 		// builder.setSize(11);

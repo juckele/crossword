@@ -46,7 +46,8 @@ public class SymmetryDescription {
 		sb.append("SymmetryDescription: {");
 		String previous = "";
 		for (Symmetry s : Symmetry.values()) {
-			sb.append(previous).append(s).append(":").append(_symmetries.get(s));
+			sb.append(previous).append(s).append(':').append(_symmetries.get(s) == 1).append(':')
+					.append(String.format("%1.2f", _symmetries.get(s))).append('%');
 			previous = ", ";
 		}
 		sb.append("}");

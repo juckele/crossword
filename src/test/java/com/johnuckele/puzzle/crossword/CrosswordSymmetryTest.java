@@ -21,6 +21,7 @@ public class CrosswordSymmetryTest {
 		SymmetryDescription sym = puzzle.getSymmetryDescription();
 		for (Symmetry s : Symmetry.values()) {
 			Assert.assertTrue(sym.is(s));
+			Assert.assertEquals(sym.get(s), 1, 0);
 		}
 	}
 
@@ -36,6 +37,7 @@ public class CrosswordSymmetryTest {
 		SymmetryDescription sym = puzzle.getSymmetryDescription();
 		for (Symmetry s : Symmetry.values()) {
 			Assert.assertFalse(sym.is(s));
+			Assert.assertTrue(sym.get(s) < 1);
 		}
 	}
 
@@ -51,8 +53,11 @@ public class CrosswordSymmetryTest {
 		// Test Symmetries
 		SymmetryDescription sym = puzzle.getSymmetryDescription();
 		Assert.assertFalse(sym.is(Symmetry.HORIZONTAL));
+		Assert.assertTrue(sym.get(Symmetry.HORIZONTAL) < 1);
 		Assert.assertTrue(sym.is(Symmetry.VERTICAL));
+		Assert.assertTrue(sym.get(Symmetry.VERTICAL) == 1);
 		Assert.assertFalse(sym.is(Symmetry.TWO_FOLD_ROTATIONAL));
+		Assert.assertTrue(sym.get(Symmetry.TWO_FOLD_ROTATIONAL) < 1);
 	}
 
 	@Test
@@ -67,8 +72,11 @@ public class CrosswordSymmetryTest {
 		// Test Symmetries
 		SymmetryDescription sym = puzzle.getSymmetryDescription();
 		Assert.assertTrue(sym.is(Symmetry.HORIZONTAL));
+		Assert.assertTrue(sym.get(Symmetry.HORIZONTAL) == 1);
 		Assert.assertFalse(sym.is(Symmetry.VERTICAL));
+		Assert.assertTrue(sym.get(Symmetry.VERTICAL) < 1);
 		Assert.assertFalse(sym.is(Symmetry.TWO_FOLD_ROTATIONAL));
+		Assert.assertTrue(sym.get(Symmetry.TWO_FOLD_ROTATIONAL) < 1);
 	}
 
 	@Test
@@ -83,7 +91,10 @@ public class CrosswordSymmetryTest {
 		// Test Symmetries
 		SymmetryDescription sym = puzzle.getSymmetryDescription();
 		Assert.assertFalse(sym.is(Symmetry.HORIZONTAL));
+		Assert.assertTrue(sym.get(Symmetry.HORIZONTAL) < 1);
 		Assert.assertFalse(sym.is(Symmetry.VERTICAL));
+		Assert.assertTrue(sym.get(Symmetry.VERTICAL) < 1);
 		Assert.assertTrue(sym.is(Symmetry.TWO_FOLD_ROTATIONAL));
+		Assert.assertTrue(sym.get(Symmetry.TWO_FOLD_ROTATIONAL) == 1);
 	}
 }
