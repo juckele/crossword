@@ -128,50 +128,56 @@ public class CrosswordPuzzle {
 	}
 
 	public SymmetryDescription getSymmetryDescription() {
-		HashMap<Symmetry, Boolean> symmetries = new HashMap<Symmetry, Boolean>();
-		symmetries.put(Symmetry.HORIZONTAL, isHorizontallySymmetric());
-		symmetries.put(Symmetry.VERTICAL, isVerticallySymmetric());
-		symmetries.put(Symmetry.TWO_FOLD_ROTATIONAL, isTwoFoldRotationallySymmetric());
+		HashMap<Symmetry, Double> symmetries = new HashMap<Symmetry, Double>();
+		symmetries.put(Symmetry.HORIZONTAL, measureHorizontallySymmetric());
+		symmetries.put(Symmetry.VERTICAL, measureVerticallySymmetric());
+		symmetries.put(Symmetry.TWO_FOLD_ROTATIONAL, measureTwoFoldRotationallySymmetric());
 		return new SymmetryDescription(symmetries);
 	}
 
-	private boolean isVerticallySymmetric() {
+	private double measureVerticallySymmetric() {
+		double measure = 1.0;
+		double perSquare = 1.0 / (this._size * this._size);
 		for (int i = 0; i < _size; i++) {
 			for (int j = 0; j < _size; j++) {
 				char c = _letterGrid[i][j];
 				char mirror = _letterGrid[i][_size - j - 1];
 				if (c == BLOCKED && mirror != BLOCKED) {
-					return false;
+					measure -= perSquare;
 				}
 			}
 		}
-		return true;
+		return measure;
 	}
 
-	private boolean isHorizontallySymmetric() {
+	private double measureHorizontallySymmetric() {
+		double measure = 1.0;
+		double perSquare = 1.0 / (this._size * this._size);
 		for (int i = 0; i < _size; i++) {
 			for (int j = 0; j < _size; j++) {
 				char c = _letterGrid[i][j];
 				char mirror = _letterGrid[_size - i - 1][j];
 				if (c == BLOCKED && mirror != BLOCKED) {
-					return false;
+					measure -= perSquare;
 				}
 			}
 		}
-		return true;
+		return measure;
 	}
 
-	private boolean isTwoFoldRotationallySymmetric() {
+	private double measureTwoFoldRotationallySymmetric() {
+		double measure = 1.0;
+		double perSquare = 1.0 / (this._size * this._size);
 		for (int i = 0; i < _size; i++) {
 			for (int j = 0; j < _size; j++) {
 				char c = _letterGrid[i][j];
 				char mirror = _letterGrid[_size - i - 1][_size - j - 1];
 				if (c == BLOCKED && mirror != BLOCKED) {
-					return false;
+					measure -= perSquare;
 				}
 			}
 		}
-		return true;
+		return measure;
 	}
 
 	public String toString() {

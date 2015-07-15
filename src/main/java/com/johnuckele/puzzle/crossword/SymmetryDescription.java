@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SymmetryDescription {
-	private final Map<Symmetry, Boolean> _symmetries;
+	private final Map<Symmetry, Double> _symmetries;
 
 	/**
 	 * Creates a new SymmetryDescription object corresponding to a HashMap of of
@@ -14,8 +14,8 @@ public class SymmetryDescription {
 	 * @param symmetries
 	 *            A hash map of Symmetry types to Boolean
 	 */
-	public SymmetryDescription(HashMap<Symmetry, Boolean> symmetries) {
-		_symmetries = new HashMap<Symmetry, Boolean>(Symmetry.values().length);
+	public SymmetryDescription(HashMap<Symmetry, Double> symmetries) {
+		_symmetries = new HashMap<Symmetry, Double>(Symmetry.values().length);
 		for (Symmetry s : Symmetry.values()) {
 			if (symmetries.get(s) != null) {
 				_symmetries.put(s, symmetries.get(s));
@@ -34,6 +34,10 @@ public class SymmetryDescription {
 	 * @return boolean
 	 */
 	public boolean is(Symmetry s) {
+		return _symmetries.get(s) == 1;
+	}
+
+	public double get(Symmetry s) {
 		return _symmetries.get(s);
 	}
 
