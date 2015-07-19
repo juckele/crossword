@@ -3,12 +3,6 @@ package com.johnuckele.puzzle.crossword;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.johnuckele.puzzle.crossword.CrosswordPuzzle;
-import com.johnuckele.puzzle.crossword.Direction;
-import com.johnuckele.puzzle.crossword.Symmetry;
-import com.johnuckele.puzzle.crossword.SymmetryDescription;
-import com.johnuckele.puzzle.crossword.Word;
-
 public class CrosswordSymmetryTest {
 
 	@Test

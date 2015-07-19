@@ -37,6 +37,7 @@ public class PuzzleBuildTest {
 		canPlace = puzzle.canPlaceWord(DONKEY, 2, 1, Direction.HORIZONTAL);
 		Assert.assertTrue("Placement should be possible", canPlace);
 		puzzle.placeWord(DONKEY, 2, 1, Direction.HORIZONTAL);
+		System.out.println(puzzle);
 	}
 
 	@Test

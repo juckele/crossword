@@ -31,8 +31,10 @@ public class CrosswordPuzzle {
 		// @formatter:off
 		return
 				checkBounds(word, row, col, direction)
-				&& lettersAreConflectFree(word, row, col, direction)
-				&& hasAbutmentClearance(word, row, col, direction);
+				&& lettersAreConflictFree(word, row, col, direction)
+				&& hasAbutmentClearance(word, row, col, direction)
+				&& lettersAreConflictFreeForEnforcedSymmetry(word, row, col, direction)
+				&& hasAbutmentClearanceForEnforcedSymmetry(word, row, col, direction);
 		// @formatter:on
 	}
 
@@ -45,7 +47,7 @@ public class CrosswordPuzzle {
 		return true;
 	}
 
-	private boolean lettersAreConflectFree(Word word, int row, int col, Direction direction) {
+	private boolean lettersAreConflictFree(Word word, int row, int col, Direction direction) {
 		int rowOffset = 0;
 		int colOffset = 0;
 		String string = word.getString();
@@ -58,6 +60,30 @@ public class CrosswordPuzzle {
 				rowOffset++;
 			} else {
 				colOffset++;
+			}
+		}
+		return true;
+	}
+
+	private boolean lettersAreConflictFreeForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
+		if (this._enforcedSymmetry == null) {
+			return true;
+		} else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
+			throw new IllegalStateException("Symmetry enforcement is not supported for " + this._enforcedSymmetry);
+		}
+		row = _size - row - 1;
+		col = _size - col - 1;
+		int rowOffset = 0;
+		int colOffset = 0;
+		for (int i = 0; i < word.getLength(); i++) {
+			char currentLetter = _letterGrid[row + rowOffset][col + colOffset];
+			if (currentLetter != CLEAR && currentLetter != MUST_USE && currentLetter == BLOCKED) {
+				return false;
+			}
+			if (direction == Direction.VERTICAL) {
+				rowOffset--;
+			} else {
+				colOffset--;
 			}
 		}
 		return true;
@@ -84,6 +110,41 @@ public class CrosswordPuzzle {
 			}
 			if (col + length < _size) {
 				if (_letterGrid[row][col + length] != BLOCKED && _letterGrid[row][col + length] != CLEAR) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean hasAbutmentClearanceForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
+		if (this._enforcedSymmetry == null) {
+			return true;
+		} else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
+			throw new IllegalStateException("Symmetry enforcement is not supported for " + this._enforcedSymmetry);
+		}
+		row = _size - row - 1;
+		col = _size - col - 1;
+		int length = word.getLength();
+		if (direction == Direction.VERTICAL) {
+			if (row < _size - 1) {
+				if (_letterGrid[row + 1][col] != BLOCKED && _letterGrid[row + 1][col] != CLEAR) {
+					return false;
+				}
+			}
+			if (row - length > 0) {
+				if (_letterGrid[row - length][col] != BLOCKED && _letterGrid[row - length][col] != CLEAR) {
+					return false;
+				}
+			}
+		} else {
+			if (col < _size - 1) {
+				if (_letterGrid[row][col + 1] != BLOCKED && _letterGrid[row][col + 1] != CLEAR) {
+					return false;
+				}
+			}
+			if (col - length > 0) {
+				if (_letterGrid[row][col - length] != BLOCKED && _letterGrid[row][col - length] != CLEAR) {
 					return false;
 				}
 			}
