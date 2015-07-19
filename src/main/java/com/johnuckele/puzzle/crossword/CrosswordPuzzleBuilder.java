@@ -92,6 +92,7 @@ public class CrosswordPuzzleBuilder {
 
 	public CrosswordPuzzle build() {
 		CrosswordPuzzle p = new CrosswordPuzzle(_size);
+		p.setEnforcedSymmetry(Symmetry.TWO_FOLD_ROTATIONAL);
 		_unusedPrimaryWords = new WordList(_allPrimaryWords);
 		_unusedFillerWords = new WordList(_allFillerWords);
 		int wordsAdded = 0;

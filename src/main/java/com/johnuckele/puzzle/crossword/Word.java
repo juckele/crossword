@@ -13,7 +13,7 @@ public class Word {
 		return _score;
 	}
 
-	public String getWord() {
+	public String getString() {
 		return _word;
 	}
 

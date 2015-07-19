@@ -11,6 +11,7 @@ public class CrosswordPuzzle {
 	private WordList _answers;
 	private int _verticalWords;
 	private int _horizontalWords;
+	private Symmetry _enforcedSymmetry;
 
 	public CrosswordPuzzle(int size) {
 		_size = size;
@@ -18,20 +19,37 @@ public class CrosswordPuzzle {
 		_answers = new WordList();
 	}
 
-	public boolean canPlaceWord(Word word, int row, int col, Direction direction) {
-		String string = word.getWord();
-		int rowOffset = 0;
-		int colOffset = 0;
+	public int getVerticalWords() {
+		return _verticalWords;
+	}
 
-		// check bounds
+	public int getHorizontalWords() {
+		return _horizontalWords;
+	}
+
+	public boolean canPlaceWord(Word word, int row, int col, Direction direction) {
+		// @formatter:off
+		return
+				checkBounds(word, row, col, direction)
+				&& lettersAreConflectFree(word, row, col, direction)
+				&& hasAbutmentClearance(word, row, col, direction);
+		// @formatter:on
+	}
+
+	private boolean checkBounds(Word word, int row, int col, Direction direction) {
 		if (row < 0 || col < 0 || row >= _size || col >= _size
-				|| (direction == Direction.VERTICAL && row + string.length() > _size)
-				|| (direction == Direction.HORIZONTAL && col + string.length() > _size)) {
+				|| (direction == Direction.VERTICAL && row + word.getLength() > _size)
+				|| (direction == Direction.HORIZONTAL && col + word.getLength() > _size)) {
 			return false;
 		}
+		return true;
+	}
 
-		// check for letter conflicts
-		for (int i = 0; i < string.length(); i++) {
+	private boolean lettersAreConflectFree(Word word, int row, int col, Direction direction) {
+		int rowOffset = 0;
+		int colOffset = 0;
+		String string = word.getString();
+		for (int i = 0; i < word.getLength(); i++) {
 			char currentLetter = _letterGrid[row + rowOffset][col + colOffset];
 			if (currentLetter != CLEAR && currentLetter != MUST_USE && currentLetter != string.charAt(i)) {
 				return false;
@@ -42,16 +60,19 @@ public class CrosswordPuzzle {
 				colOffset++;
 			}
 		}
+		return true;
+	}
 
-		// check to abutment conflicts
+	private boolean hasAbutmentClearance(Word word, int row, int col, Direction direction) {
+		int length = word.getLength();
 		if (direction == Direction.VERTICAL) {
 			if (row > 0) {
 				if (_letterGrid[row - 1][col] != BLOCKED && _letterGrid[row - 1][col] != CLEAR) {
 					return false;
 				}
 			}
-			if (row + rowOffset < _size) {
-				if (_letterGrid[row + rowOffset][col] != BLOCKED && _letterGrid[row + rowOffset][col] != CLEAR) {
+			if (row + length < _size) {
+				if (_letterGrid[row + length][col] != BLOCKED && _letterGrid[row + length][col] != CLEAR) {
 					return false;
 				}
 			}
@@ -61,14 +82,12 @@ public class CrosswordPuzzle {
 					return false;
 				}
 			}
-			if (col + colOffset < _size) {
-				if (_letterGrid[row][col + colOffset] != BLOCKED && _letterGrid[row][col + colOffset] != CLEAR) {
+			if (col + length < _size) {
+				if (_letterGrid[row][col + length] != BLOCKED && _letterGrid[row][col + length] != CLEAR) {
 					return false;
 				}
 			}
 		}
-
-		// no conflicts, it fits!
 		return true;
 	}
 
@@ -76,12 +95,15 @@ public class CrosswordPuzzle {
 		if (!canPlaceWord(word, row, col, direction)) {
 			throw new IllegalStateException("Word cannot be placed");
 		}
+		addToLetterGrid(word, row, col, direction);
+		blockEndsOfWord(word, row, col, direction);
+		addToAnswerList(word, row, col, direction);
+	}
 
-		String string = word.getWord();
+	private void addToLetterGrid(Word word, int row, int col, Direction direction) {
+		String string = word.getString();
 		int rowOffset = 0;
 		int colOffset = 0;
-
-		// write the word into the grid
 		for (int i = 0; i < string.length(); i++) {
 			_letterGrid[row + rowOffset][col + colOffset] = string.charAt(i);
 			if (direction == Direction.VERTICAL) {
@@ -90,25 +112,28 @@ public class CrosswordPuzzle {
 				colOffset++;
 			}
 		}
+	}
 
-		// block space before and after word
+	private void blockEndsOfWord(Word word, int row, int col, Direction direction) {
+		int length = word.getLength();
 		if (direction == Direction.VERTICAL) {
 			if (row > 0) {
 				_letterGrid[row - 1][col] = BLOCKED;
 			}
-			if (row + rowOffset < _size) {
-				_letterGrid[row + rowOffset][col] = BLOCKED;
+			if (row + length < _size) {
+				_letterGrid[row + length][col] = BLOCKED;
 			}
 		} else {
 			if (col > 0) {
 				_letterGrid[row][col - 1] = BLOCKED;
 			}
-			if (col + colOffset < _size) {
-				_letterGrid[row][col + colOffset] = BLOCKED;
+			if (col + length < _size) {
+				_letterGrid[row][col + length] = BLOCKED;
 			}
 		}
+	}
 
-		// Add this to our list of answers
+	private void addToAnswerList(Word word, int row, int col, Direction direction) {
 		_answers.add(new PlacedWord(word, row, col, direction));
 		if (direction == Direction.VERTICAL) {
 			_verticalWords++;
@@ -125,6 +150,10 @@ public class CrosswordPuzzle {
 				}
 			}
 		}
+	}
+
+	public void setEnforcedSymmetry(Symmetry symmetry) {
+		this._enforcedSymmetry = symmetry;
 	}
 
 	public SymmetryDescription getSymmetryDescription() {
@@ -219,13 +248,4 @@ public class CrosswordPuzzle {
 		puzzle.placeWord(new Word("monkey", 5), 3, 2, Direction.HORIZONTAL);
 		System.out.println(puzzle.toString(true));
 	}
-
-	public int getVerticalWords() {
-		return _verticalWords;
-	}
-
-	public int getHorizontalWords() {
-		return _horizontalWords;
-	}
-
 }
