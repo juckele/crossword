@@ -13,6 +13,7 @@ public class SymmetryEnforcementTest {
 	public void test2FoldSymmetryEnforcement() {
 		boolean canPlace;
 		CrosswordPuzzle puzzle = new CrosswordPuzzle(12);
+		puzzle.setEnforcedSymmetry(Symmetry.TWO_FOLD_ROTATIONAL);
 
 		canPlace = puzzle.canPlaceWord(DONKEY, 9, 6, Direction.HORIZONTAL);
 		Assert.assertTrue("Placement should be possible", canPlace);
