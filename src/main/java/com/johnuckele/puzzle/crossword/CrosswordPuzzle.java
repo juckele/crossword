@@ -28,6 +28,8 @@ public class CrosswordPuzzle {
 	}
 
 	public boolean canPlaceWord(Word word, int row, int col, Direction direction) {
+		boolean Abutment2FoldTest = hasAbutmentClearanceForEnforcedSymmetry(word, row, col, direction);
+		System.out.println("Abutment2FoldTest: " + Abutment2FoldTest);
 		// @formatter:off
 		return
 				checkBounds(word, row, col, direction)
@@ -35,6 +37,7 @@ public class CrosswordPuzzle {
 				&& hasAbutmentClearance(word, row, col, direction)
 				&& lettersAreConflictFreeForEnforcedSymmetry(word, row, col, direction)
 				&& hasAbutmentClearanceForEnforcedSymmetry(word, row, col, direction);
+		
 		// @formatter:on
 	}
 
@@ -118,11 +121,13 @@ public class CrosswordPuzzle {
 	}
 
 	private boolean hasAbutmentClearanceForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
-		if (this._enforcedSymmetry == null) {
-			return true;
-		} else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
-			throw new IllegalStateException("Symmetry enforcement is not supported for " + this._enforcedSymmetry);
-		}
+		// if (this._enforcedSymmetry == null) {
+		// return true;
+		// } else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
+		// throw new
+		// IllegalStateException("Symmetry enforcement is not supported for " +
+		// this._enforcedSymmetry);
+		// }
 		row = _size - row - 1;
 		col = _size - col - 1;
 		int length = word.getLength();
@@ -132,7 +137,7 @@ public class CrosswordPuzzle {
 					return false;
 				}
 			}
-			if (row - length > 0) {
+			if (row - length >= 0) {
 				if (_letterGrid[row - length][col] != BLOCKED && _letterGrid[row - length][col] != CLEAR) {
 					return false;
 				}
@@ -143,7 +148,7 @@ public class CrosswordPuzzle {
 					return false;
 				}
 			}
-			if (col - length > 0) {
+			if (col - length >= 0) {
 				if (_letterGrid[row][col - length] != BLOCKED && _letterGrid[row][col - length] != CLEAR) {
 					return false;
 				}
