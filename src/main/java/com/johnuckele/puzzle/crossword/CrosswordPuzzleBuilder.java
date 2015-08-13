@@ -97,14 +97,14 @@ public class CrosswordPuzzleBuilder {
 		_unusedFillerWords = new WordList(_allFillerWords);
 		int wordsAdded = 0;
 		long startTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - startTime < 10000 && wordsAdded < 9) {
+		while (System.currentTimeMillis() - startTime < 1000 && wordsAdded < 9) {
 			if (addWord(p, true)) {
 				wordsAdded++;
 			}
 		}
 		wordsAdded = 0;
 		startTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - startTime < 10000 && wordsAdded < 30) {
+		while (System.currentTimeMillis() - startTime < 1000 && wordsAdded < 30) {
 			if (addWord(p, false)) {
 				wordsAdded++;
 			}

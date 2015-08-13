@@ -33,6 +33,7 @@ public class CrosswordPuzzle {
 				checkBounds(word, row, col, direction)
 				&& lettersAreConflictFree(word, row, col, direction)
 				&& hasAbutmentClearance(word, row, col, direction)
+				&& checkBoundsForEnforcedSymmetry(word, row, col, direction)
 				&& lettersAreConflictFreeForEnforcedSymmetry(word, row, col, direction)
 				&& hasAbutmentClearanceForEnforcedSymmetry(word, row, col, direction);
 		// @formatter:on
@@ -61,6 +62,22 @@ public class CrosswordPuzzle {
 			} else {
 				colOffset++;
 			}
+		}
+		return true;
+	}
+
+	private boolean checkBoundsForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
+		if (this._enforcedSymmetry == null) {
+			return true;
+		} else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
+			throw new IllegalStateException("Symmetry enforcement is not supported for " + this._enforcedSymmetry);
+		}
+		int symmetricRow = _size - row - 1;
+		int symmetricCol = _size - col - 1;
+		int rowOffset = direction == Direction.VERTICAL ? word.getLength() : 0;
+		int colOffset = direction == Direction.HORIZONTAL ? word.getLength() : 0;
+		if (row <= _size / 2 && col <= _size / 2 && row + rowOffset >= _size / 2 && col + colOffset >= _size / 2) {
+			return row + rowOffset == symmetricRow && col + colOffset == symmetricCol;
 		}
 		return true;
 	}
