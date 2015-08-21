@@ -1,7 +1,5 @@
 package com.johnuckele.puzzle.crossword;
 
-import java.util.HashMap;
-
 public class CrosswordPuzzle {
 	public static final char BLOCKED = ' ';
 	public static final char CLEAR = 0;
@@ -11,7 +9,7 @@ public class CrosswordPuzzle {
 	private WordList _answers;
 	private int _verticalWords;
 	private int _horizontalWords;
-	private Symmetry _enforcedSymmetry;
+	private boolean _enforceSymmetry;
 
 	public CrosswordPuzzle(int size) {
 		_size = size;
@@ -48,6 +46,20 @@ public class CrosswordPuzzle {
 		return true;
 	}
 
+	private boolean checkBoundsForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
+		if (!_enforceSymmetry) {
+			return true;
+		}
+		int symmetricRow = _size - row - 1;
+		int symmetricCol = _size - col - 1;
+		int rowOffset = direction == Direction.VERTICAL ? word.getLength() : 0;
+		int colOffset = direction == Direction.HORIZONTAL ? word.getLength() : 0;
+		if (row <= _size / 2 && col <= _size / 2 && row + rowOffset >= _size / 2 && col + colOffset >= _size / 2) {
+			return row + rowOffset == symmetricRow && col + colOffset == symmetricCol;
+		}
+		return true;
+	}
+
 	private boolean lettersAreConflictFree(Word word, int row, int col, Direction direction) {
 		int rowOffset = 0;
 		int colOffset = 0;
@@ -66,27 +78,9 @@ public class CrosswordPuzzle {
 		return true;
 	}
 
-	private boolean checkBoundsForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
-		if (this._enforcedSymmetry == null) {
-			return true;
-		} else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
-			throw new IllegalStateException("Symmetry enforcement is not supported for " + this._enforcedSymmetry);
-		}
-		int symmetricRow = _size - row - 1;
-		int symmetricCol = _size - col - 1;
-		int rowOffset = direction == Direction.VERTICAL ? word.getLength() : 0;
-		int colOffset = direction == Direction.HORIZONTAL ? word.getLength() : 0;
-		if (row <= _size / 2 && col <= _size / 2 && row + rowOffset >= _size / 2 && col + colOffset >= _size / 2) {
-			return row + rowOffset == symmetricRow && col + colOffset == symmetricCol;
-		}
-		return true;
-	}
-
 	private boolean lettersAreConflictFreeForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
-		if (this._enforcedSymmetry == null) {
+		if (!_enforceSymmetry) {
 			return true;
-		} else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
-			throw new IllegalStateException("Symmetry enforcement is not supported for " + this._enforcedSymmetry);
 		}
 		row = _size - row - 1;
 		col = _size - col - 1;
@@ -135,10 +129,8 @@ public class CrosswordPuzzle {
 	}
 
 	private boolean hasAbutmentClearanceForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
-		if (this._enforcedSymmetry == null) {
+		if (!_enforceSymmetry) {
 			return true;
-		} else if (this._enforcedSymmetry != Symmetry.TWO_FOLD_ROTATIONAL) {
-			throw new IllegalStateException("Symmetry enforcement is not supported for " + this._enforcedSymmetry);
 		}
 		row = _size - row - 1;
 		col = _size - col - 1;
@@ -176,6 +168,8 @@ public class CrosswordPuzzle {
 		addToLetterGrid(word, row, col, direction);
 		blockEndsOfWord(word, row, col, direction);
 		addToAnswerList(word, row, col, direction);
+		addToLetterGridForEnforcedSymmetry(word, row, col, direction);
+		blockEndsOfWordForEnforcedSymmetry(word, row, col, direction);
 	}
 
 	private void addToLetterGrid(Word word, int row, int col, Direction direction) {
@@ -188,6 +182,27 @@ public class CrosswordPuzzle {
 				rowOffset++;
 			} else {
 				colOffset++;
+			}
+		}
+	}
+
+	private void addToLetterGridForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
+		if (!_enforceSymmetry) {
+			return;
+		}
+		row = _size - row - 1;
+		col = _size - col - 1;
+		int rowOffset = 0;
+		int colOffset = 0;
+		int length = word.getLength();
+		for (int i = 0; i < length; i++) {
+			if (_letterGrid[row + rowOffset][col + colOffset] == CLEAR) {
+				_letterGrid[row + rowOffset][col + colOffset] = MUST_USE;
+			}
+			if (direction == Direction.VERTICAL) {
+				rowOffset--;
+			} else {
+				colOffset--;
 			}
 		}
 	}
@@ -211,6 +226,30 @@ public class CrosswordPuzzle {
 		}
 	}
 
+	private void blockEndsOfWordForEnforcedSymmetry(Word word, int row, int col, Direction direction) {
+		if (!_enforceSymmetry) {
+			return;
+		}
+		row = _size - row - 1;
+		col = _size - col - 1;
+		int length = word.getLength();
+		if (direction == Direction.VERTICAL) {
+			if (row < _size - 1) {
+				_letterGrid[row + 1][col] = BLOCKED;
+			}
+			if (row - length >= 0) {
+				_letterGrid[row - length][col] = BLOCKED;
+			}
+		} else {
+			if (col < _size - 1) {
+				_letterGrid[row][col + 1] = BLOCKED;
+			}
+			if (col - length >= 0) {
+				_letterGrid[row][col - length] = BLOCKED;
+			}
+		}
+	}
+
 	private void addToAnswerList(Word word, int row, int col, Direction direction) {
 		_answers.add(new PlacedWord(word, row, col, direction));
 		if (direction == Direction.VERTICAL) {
@@ -230,49 +269,11 @@ public class CrosswordPuzzle {
 		}
 	}
 
-	public void setEnforcedSymmetry(Symmetry symmetry) {
-		this._enforcedSymmetry = symmetry;
+	public void setEnforceSymmetry(boolean enforce) {
+		_enforceSymmetry = enforce;
 	}
 
-	public SymmetryDescription getSymmetryDescription() {
-		HashMap<Symmetry, Double> symmetries = new HashMap<Symmetry, Double>();
-		symmetries.put(Symmetry.HORIZONTAL, measureHorizontallySymmetric());
-		symmetries.put(Symmetry.VERTICAL, measureVerticallySymmetric());
-		symmetries.put(Symmetry.TWO_FOLD_ROTATIONAL, measureTwoFoldRotationallySymmetric());
-		return new SymmetryDescription(symmetries);
-	}
-
-	private double measureVerticallySymmetric() {
-		double measure = 1.0;
-		double perSquare = 1.0 / (this._size * this._size);
-		for (int i = 0; i < _size; i++) {
-			for (int j = 0; j < _size; j++) {
-				char c = _letterGrid[i][j];
-				char mirror = _letterGrid[i][_size - j - 1];
-				if (c == BLOCKED && mirror != BLOCKED) {
-					measure -= perSquare;
-				}
-			}
-		}
-		return measure;
-	}
-
-	private double measureHorizontallySymmetric() {
-		double measure = 1.0;
-		double perSquare = 1.0 / (this._size * this._size);
-		for (int i = 0; i < _size; i++) {
-			for (int j = 0; j < _size; j++) {
-				char c = _letterGrid[i][j];
-				char mirror = _letterGrid[_size - i - 1][j];
-				if (c == BLOCKED && mirror != BLOCKED) {
-					measure -= perSquare;
-				}
-			}
-		}
-		return measure;
-	}
-
-	private double measureTwoFoldRotationallySymmetric() {
+	public double measureSymmetry() {
 		double measure = 1.0;
 		double perSquare = 1.0 / (this._size * this._size);
 		for (int i = 0; i < _size; i++) {
@@ -315,7 +316,8 @@ public class CrosswordPuzzle {
 		if (verbose) {
 			sb.append("Total score is ");
 			sb.append(_answers.getTotalScore()).append('\n');
-			sb.append(this.getSymmetryDescription()).append('\n');
+			sb.append("Symmetry:");
+			sb.append(this.measureSymmetry()).append('\n');
 		}
 		return sb.toString();
 	}

@@ -92,19 +92,19 @@ public class CrosswordPuzzleBuilder {
 
 	public CrosswordPuzzle build() {
 		CrosswordPuzzle p = new CrosswordPuzzle(_size);
-		p.setEnforcedSymmetry(Symmetry.TWO_FOLD_ROTATIONAL);
+		p.setEnforceSymmetry(true);
 		_unusedPrimaryWords = new WordList(_allPrimaryWords);
 		_unusedFillerWords = new WordList(_allFillerWords);
 		int wordsAdded = 0;
 		long startTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - startTime < 1000 && wordsAdded < 9) {
+		while (System.currentTimeMillis() - startTime < 500 && wordsAdded < 9) {
 			if (addWord(p, true)) {
 				wordsAdded++;
 			}
 		}
 		wordsAdded = 0;
 		startTime = System.currentTimeMillis();
-		while (System.currentTimeMillis() - startTime < 1000 && wordsAdded < 30) {
+		while (System.currentTimeMillis() - startTime < 500 && wordsAdded < 30) {
 			if (addWord(p, false)) {
 				wordsAdded++;
 			}
@@ -119,7 +119,7 @@ public class CrosswordPuzzleBuilder {
 
 		CrosswordPuzzleBuilder builder = new CrosswordPuzzleBuilder();
 
-		builder.setSize(15);
+		builder.setSize(7);
 		builder.addPrimaryWordList(primaryWords);
 		builder.addFillerWordList(fillerWords);
 

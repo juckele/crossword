@@ -12,11 +12,7 @@ public class CrosswordSymmetryTest {
 		System.out.println(puzzle.toString(true));
 		puzzle.blockOpenSpaces();
 
-		SymmetryDescription sym = puzzle.getSymmetryDescription();
-		for (Symmetry s : Symmetry.values()) {
-			Assert.assertTrue(sym.is(s));
-			Assert.assertEquals(sym.get(s), 1, 0);
-		}
+		Assert.assertTrue(puzzle.measureSymmetry() == 1);
 	}
 
 	@Test
@@ -28,11 +24,7 @@ public class CrosswordSymmetryTest {
 		puzzle.blockOpenSpaces();
 
 		// Test Symmetries
-		SymmetryDescription sym = puzzle.getSymmetryDescription();
-		for (Symmetry s : Symmetry.values()) {
-			Assert.assertFalse(sym.is(s));
-			Assert.assertTrue(sym.get(s) < 1);
-		}
+		Assert.assertTrue(puzzle.measureSymmetry() < 1);
 	}
 
 	@Test
@@ -45,13 +37,7 @@ public class CrosswordSymmetryTest {
 		puzzle.blockOpenSpaces();
 
 		// Test Symmetries
-		SymmetryDescription sym = puzzle.getSymmetryDescription();
-		Assert.assertFalse(sym.is(Symmetry.HORIZONTAL));
-		Assert.assertTrue(sym.get(Symmetry.HORIZONTAL) < 1);
-		Assert.assertTrue(sym.is(Symmetry.VERTICAL));
-		Assert.assertTrue(sym.get(Symmetry.VERTICAL) == 1);
-		Assert.assertFalse(sym.is(Symmetry.TWO_FOLD_ROTATIONAL));
-		Assert.assertTrue(sym.get(Symmetry.TWO_FOLD_ROTATIONAL) < 1);
+		Assert.assertTrue(puzzle.measureSymmetry() < 1);
 	}
 
 	@Test
@@ -64,13 +50,7 @@ public class CrosswordSymmetryTest {
 		puzzle.blockOpenSpaces();
 
 		// Test Symmetries
-		SymmetryDescription sym = puzzle.getSymmetryDescription();
-		Assert.assertTrue(sym.is(Symmetry.HORIZONTAL));
-		Assert.assertTrue(sym.get(Symmetry.HORIZONTAL) == 1);
-		Assert.assertFalse(sym.is(Symmetry.VERTICAL));
-		Assert.assertTrue(sym.get(Symmetry.VERTICAL) < 1);
-		Assert.assertFalse(sym.is(Symmetry.TWO_FOLD_ROTATIONAL));
-		Assert.assertTrue(sym.get(Symmetry.TWO_FOLD_ROTATIONAL) < 1);
+		Assert.assertTrue(puzzle.measureSymmetry() < 1);
 	}
 
 	@Test
@@ -83,12 +63,6 @@ public class CrosswordSymmetryTest {
 		puzzle.blockOpenSpaces();
 
 		// Test Symmetries
-		SymmetryDescription sym = puzzle.getSymmetryDescription();
-		Assert.assertFalse(sym.is(Symmetry.HORIZONTAL));
-		Assert.assertTrue(sym.get(Symmetry.HORIZONTAL) < 1);
-		Assert.assertFalse(sym.is(Symmetry.VERTICAL));
-		Assert.assertTrue(sym.get(Symmetry.VERTICAL) < 1);
-		Assert.assertTrue(sym.is(Symmetry.TWO_FOLD_ROTATIONAL));
-		Assert.assertTrue(sym.get(Symmetry.TWO_FOLD_ROTATIONAL) == 1);
+		Assert.assertTrue(puzzle.measureSymmetry() == 1);
 	}
 }
