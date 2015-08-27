@@ -1,6 +1,7 @@
 package com.johnuckele.puzzle.crossword;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class WordList {
 	private ArrayList<Word> _words;
@@ -32,6 +33,10 @@ public class WordList {
 
 	public int size() {
 		return _words.size();
+	}
+
+	public void sort() {
+		Collections.sort(_words);
 	}
 
 	public int getTotalScore() {

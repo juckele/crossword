@@ -1,6 +1,6 @@
 package com.johnuckele.puzzle.crossword;
 
-public class Word {
+public class Word implements Comparable<Word> {
 	private final String _word;
 	private final int _score;
 
@@ -23,5 +23,13 @@ public class Word {
 
 	public int getLength() {
 		return _word.length();
+	}
+
+	public int compareTo(Word that) {
+		if (that instanceof Word) {
+			return this._word.compareTo(that._word);
+		} else {
+			return 1;
+		}
 	}
 }
